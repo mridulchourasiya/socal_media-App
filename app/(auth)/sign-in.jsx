@@ -6,6 +6,9 @@ import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { signIn } from "../../lib/appwrite";
+import { Alert } from "react-native";
+import { router } from "expo-router";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -15,7 +18,24 @@ const SignIn = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = () => {};
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please fill out all fields");
+    }
+    setIsSubmitting(true);
+
+    // Call the Appwrite API to create a new user with the provided data
+    try {
+      await signIn(form.email, form.password);
+
+      // set it to global state...
+      router.replace("/home");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
