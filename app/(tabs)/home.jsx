@@ -1,17 +1,24 @@
-import { FlatList, Text, View } from "react-native";
-import React from "react";
+import { FlatList, RefreshControl, Text, View } from "react-native";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import { Image } from "react-native";
 import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
+import EmptyState from "../../components/EmptyState";
 
 const Home = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+     setRefreshing(true);
+  //   // recoll the video to record
+    setRefreshing(false)
+  };
+
   return (
-    <SafeAreaView className="bg-primary">
+    <SafeAreaView className="bg-primary h-full">
       <FlatList
-        // data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
-        data={[]}
+        data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
           <Text className="text-3xl text-white">{item.id}</Text>
@@ -42,16 +49,23 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3">
                 Latest Videos
               </Text>
-              {/* the empty array for the input */}
+              {/* the empty array for the input  */}
               <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} />
             </View>
           </View>
         )}
         // flatlist property
+        // if the list is empty
 
-        ListEmptyComponent={() => {
-          <Text className="text-white">empty</Text>;
-        }}
+        ListEmptyComponent={() => (
+          <EmptyState
+            title="No video found"
+            subtitle="Be the frist One to create it"
+          />
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
